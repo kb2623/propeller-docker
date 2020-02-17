@@ -1,2 +1,2 @@
-# propeller-docker
-SimpleIDE of Parallax Inc. for ActivityBot 365
+# monodev-docker
+Mono development in linux with docker.
