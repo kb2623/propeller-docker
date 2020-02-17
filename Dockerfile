@@ -11,7 +11,7 @@ USER root
 WORKDIR /root
 
 RUN apt update \
- && apt install -y ca-certificates vim-gtk3 git bash curl tmux universal-ctags fonts-firacode gcc g++ qt5-default qt4-default gdb make xserver-xorg-dev \
+ && apt install -y ca-certificates vim-gtk3 git bash curl tmux universal-ctags fonts-firacode gcc g++ qt5-default gdb make xserver-xorg-dev \
  && apt clean
 
 # Make skel dir
