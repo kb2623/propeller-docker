@@ -16,17 +16,8 @@ WORKDIR /root
 ## Install basic programs
 RUN apt update \
  && apt upgrade -y \
- && apt install -y apt-utils bash \
- && apt install -y gettext libbsd-dev texinfo vim-gtk3 git curl tmux universal-ctags fonts-firacode gcc g++ qt5-default build-essential linux-headers-$(uname -r) autoconf gdb make gawk gnat bison byacc m4 flex expect xserver-xorg-dev binutils \
- && apt clean
-
-## Install Node.js and NPM
-RUN curl -sL https://deb.nodesource.com/setup_$NODE_VERSION -o nodesource_setup.sh \
- && bash nodesource_setup.sh \
- && apt update \
- && apt upgrade -y \
- && apt install -y nodejs \
- && npm install \
+ && apt install -y apt-utils \
+ && apt install -y vim-gtk3 git bash curl make tmux fonts-firacode gcc xserver-xorg-dev \
  && apt clean
 
 # Make skel dir
@@ -57,6 +48,7 @@ RUN mkdir -p /mnt/data \
 ## Install propeller-gcc compiler
 RUN git clone https://github.com/parallaxinc/propgcc.git propgcc \
  && cd propgcc \
+ && make PREFIX=$PREFIX gcc gdb \
  && make PREFIX=$PREFIX ERROR_ON_WARNING=no
 
 ## Install Spin/PASM compiler for the Parallax Propeller
@@ -65,14 +57,14 @@ RUN git clone https://github.com/parallaxinc/OpenSpin.git OpenSpin \
  && make
 
 ## Install Parallax Propeller loader supporting both serial and wifi downloads
-RUN git clone https://github.com/parallaxinc/PropLoader.git PropLoader \
+ RUN git clone https://github.com/parallaxinc/PropLoader.git PropLoader \
  && cd PropLoader \
  && make
 
 ## Install SimpleIDE
 RUN git clone https://github.com/parallaxinc/SimpleIDE.git SimpleIDE \
  && cd SimpleIDE \
- && make
+ && bash plinrelease.sh
 
 ## Install Parallax IDE
 RUN git clone https://github.com/parallaxinc/Parallax-IDE.git ParallaxIDE \
