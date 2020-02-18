@@ -17,7 +17,7 @@ WORKDIR /root
 RUN apt update \
  && apt upgrade -y \
  && apt install -y apt-utils \
- && apt install -y vim-gtk3 git bash curl make tmux fonts-firacode gcc xserver-xorg-dev \
+ && apt install -y bash curl make wget vim-gtk3 git tmux fonts-firacode xserver-xorg-dev gcc g++ texinfo binutils bison \
  && apt clean
 
 # Make skel dir
@@ -46,10 +46,13 @@ RUN mkdir -p /mnt/data \
  && chown $AUSER:$AGROUP $AHOME/data
 
 ## Install propeller-gcc compiler
-RUN git clone https://github.com/parallaxinc/propgcc.git propgcc \
+RUN git clone https://github.com/dbetz/propeller-gcc.git propgcc \
  && cd propgcc \
- && make PREFIX=$PREFIX gcc gdb \
- && make PREFIX=$PREFIX ERROR_ON_WARNING=no
+ && git submodule init \
+ && git submodule update \
+ && bash ./gcc/contrib/download_prerequisites \
+ && make INSTALL=$PREFIX GCCDIR=gcc ERROR_ON_WARNING=no \
+ && make INSTALL=$PREFIX ERROR_ON_WARNING=no install
 
 ## Install Spin/PASM compiler for the Parallax Propeller
 RUN git clone https://github.com/parallaxinc/OpenSpin.git OpenSpin \
@@ -66,12 +69,8 @@ RUN git clone https://github.com/parallaxinc/SimpleIDE.git SimpleIDE \
  && cd SimpleIDE \
  && bash plinrelease.sh
 
-## Install Parallax IDE
-RUN git clone https://github.com/parallaxinc/Parallax-IDE.git ParallaxIDE \
- && cd ParallaxIDE \
- && npm cache clean \
- && npm install \
- && npm run build
+## Clean at the end
+RUN rm -rf propgcc OpenSpin PropLoader SimpleIDE
 
 # ENTRYPOINT
 USER $AUSER
