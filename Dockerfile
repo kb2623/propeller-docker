@@ -16,7 +16,7 @@ WORKDIR /root
 RUN apt update \
  && apt upgrade -y \
  && apt install -y apt-utils \
- && apt install -y sed tar bash curl make wget vim git tmux qt5-default xserver-xorg-dev libxcb-xinerama0-dev gcc g++ gdb perl build-essential binutils bison flex expat xterm libncurses5-dev
+ && apt install -y sed tar bash curl make wget vim git tmux qt5-default xserver-xorg-dev install '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev gcc g++ gdb perl build-essential binutils bison flex expat xterm libncurses5-dev
 
 # Make skel dir
 USER root
