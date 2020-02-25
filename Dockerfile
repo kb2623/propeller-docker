@@ -15,9 +15,8 @@ WORKDIR /root
 
 ## Install basic programs
 RUN apt update \
- && apt upgrade -y \
  && apt install -y apt-utils \
- && apt install -y sed tar bash curl make wget vim git tmux qt5-default xserver-xorg-dev install '^libxcb.*-dev' libx11-xcb-dev gperf libicu-dev libxslt-dev ruby libglu1-mesa-dev libxrender-dev libxi-dev gcc g++ gdb perl build-essential binutils bison flex expat xterm libncurses5-dev
+ && apt install -y sed tar bash curl make wget vim git tmux qt5-default xserver-xorg-dev '^libxcb.*-dev' libx11-xcb-dev gperf libicu-dev libxslt-dev ruby libglu1-mesa-dev libxrender-dev libxi-dev gcc g++ gdb perl build-essential binutils bison flex expat xterm libncurses5-dev
 
 # Make skel dir
 USER root
@@ -57,7 +56,7 @@ ENV PATH=/opt/parallax:$PATH
 RUN git clone https://github.com/parallaxinc/propgcc propgcc \
  && cd propgcc \
  && sed -i -e 's/@colophon/@@colophon/' -e 's/doc@cygnus.com/doc@@cygnus.com/' binutils/bfd/doc/bfd.texinfo \
- && sed -i -e 's/@colophon/@@colophon/' -e 's/doc@cygnus.com/doc@@cygnus.com/' binutils/ld/ld.texinfo
+ && sed -i -e 's/@colophon/@@colophon/' -e 's/doc@cygnus.com/doc@@cygnus.com/' binutils/ld/ld.texinfo \
  && make -j $MAKE_NO_PROC PREFIX=/opt/parallax
 
 ## Install Spin/PASM compiler for the Parallax Propeller
