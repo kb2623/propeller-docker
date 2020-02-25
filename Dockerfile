@@ -16,7 +16,8 @@ WORKDIR /root
 ## Install basic programs
 RUN apt update \
  && apt install -y apt-utils \
- && apt install -y sed tar bash curl make wget vim git tmux qt5-default xserver-xorg-dev '^libxcb.*-dev' libx11-xcb-dev gperf libicu-dev libxslt-dev ruby libglu1-mesa-dev libxrender-dev libxi-dev gcc g++ gdb perl build-essential binutils bison flex expat xterm libncurses5-dev
+ && apt install -y sed tar bash curl make vim git tmux qt5-default xserver-xorg-dev '^libxcb.*-dev' libx11-xcb-dev gperf libicu-dev libxslt-dev ruby libglu1-mesa-dev libxrender-dev libxi-dev gcc g++ gdb perl build-essential binutils bison flex expat xterm libncurses5-dev
+ENV wget="crul -O"
 
 # Make skel dir
 USER root
