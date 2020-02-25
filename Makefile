@@ -7,6 +7,8 @@ DOCKER_USER_ID:=1000
 DOCKER_GROUP:=propellers
 DOCKER_GROUP_ID:=1000
 
+MAKE_NO_PROC:=3
+
 all: build run
 
 volume:
@@ -22,6 +24,7 @@ build:
 		--build-arg AUSER_ID=${DOCKER_USER_ID} \
 		--build-arg AGROUP=${DOCKER_GROUP} \
 		--build-arg AGROUP_ID=${DOCKER_GROUP_ID} \
+		--build-arg MAKE_NO_PROC=${MAKE_NO_PROC} \
 		-t ${DOCKER_NAME}-image:${DOCKER_TAG} .
 
 xorgHosts:

@@ -6,7 +6,7 @@ ARG AGROUP=propellers
 ARG AGROUP_ID=1000
 ARG AHOME=/home/$AUSER
 
-ARG PREFIX=/usr/local
+ARG PROPELLER_PREFIX=/usr/local
 ARG MAKE_NO_PROC=4
 
 # Install programs
@@ -48,16 +48,16 @@ RUN wget http://ftp.gnu.org/gnu/texinfo/texinfo-4.13a.tar.gz \
  && tar -zxvf texinfo-4.13a.tar.gz \
  && cd texinfo-4.13 \
  && ./configure \
- && make -j 4 \
+ && make -j $MAKE_NO_PROC \
  && make install
 
 ## Install propeller-gcc compiler
-ENV PATH=/opt/parallax:$PATH
+ENV PATH="${PROPELLER_PREFIX}/bin:$PATH"
 RUN git clone https://github.com/parallaxinc/propgcc propgcc \
  && cd propgcc \
  && sed -i -e 's/@colophon/@@colophon/' -e 's/doc@cygnus.com/doc@@cygnus.com/' binutils/bfd/doc/bfd.texinfo \
  && sed -i -e 's/@colophon/@@colophon/' -e 's/doc@cygnus.com/doc@@cygnus.com/' binutils/ld/ld.texinfo \
- && make -j $MAKE_NO_PROC PREFIX=/opt/parallax
+ && make -j $MAKE_NO_PROC PREFIX="${PROPELLER_PREFIX}"
 
 ## Install Spin/PASM compiler for the Parallax Propeller
 RUN git clone https://github.com/parallaxinc/OpenSpin.git OpenSpin \
