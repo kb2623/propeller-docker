@@ -6,7 +6,6 @@ ARG AGROUP=propellers
 ARG AGROUP_ID=1000
 ARG AHOME=/home/$AUSER
 
-ARG NODE_VERSION=12.x
 ARG PREFIX=/usr/local
 
 # Install programs
@@ -17,7 +16,7 @@ WORKDIR /root
 RUN apt update \
  && apt upgrade -y \
  && apt install -y apt-utils \
- && apt install -y tar bash curl make wget vim git tmux xserver-xorg-dev gcc g++ gdb build-essential binutils bison flex expat xterm libreadline5
+ && apt install -y sed tar bash curl make wget vim git tmux xserver-xorg-dev gcc g++ gdb build-essential binutils bison flex expat xterm libncurses5-dev
 
 # Make skel dir
 USER root
@@ -53,11 +52,12 @@ RUN wget http://ftp.gnu.org/gnu/texinfo/texinfo-4.13a.tar.gz \
  && make install
 
 ## Install propeller-gcc compiler
+ENV PATH=/opt/parallax:$PATH
 RUN git clone https://github.com/parallaxinc/propgcc propgcc \
  && cd propgcc \
- && ed -i -e 's/@colophon/@@colophon/' -e 's/doc@cygnus.com/doc@@cygnus.com/' binutils/bfd/doc/bfd.texinfo \
- && ed -i -e 's/@colophon/@@colophon/' -e 's/doc@cygnus.com/doc@@cygnus.com/' binutils/ld/ld.texinfo
- && make 
+ && sed -i -e 's/@colophon/@@colophon/' -e 's/doc@cygnus.com/doc@@cygnus.com/' binutils/bfd/doc/bfd.texinfo \
+ && sed -i -e 's/@colophon/@@colophon/' -e 's/doc@cygnus.com/doc@@cygnus.com/' binutils/ld/ld.texinfo
+ && make PREFIX=/opt/parallax
 
 ## Install Spin/PASM compiler for the Parallax Propeller
 RUN git clone https://github.com/parallaxinc/OpenSpin.git OpenSpin \
@@ -65,11 +65,16 @@ RUN git clone https://github.com/parallaxinc/OpenSpin.git OpenSpin \
  && make
 
 ## Install Parallax Propeller loader supporting both serial and wifi downloads
- RUN git clone https://github.com/parallaxinc/PropLoader.git PropLoader \
+ENV OS=linux
+RUN git clone https://github.com/parallaxinc/PropLoader.git PropLoader \
  && cd PropLoader \
  && make
 
 ## Install SimpleIDE
+RUN wget https://download.qt.io/archive/qt/5.4/5.4.0/qt-opensource-linux-x64-5.4.0.run \
+ && chmod a+x qt-opensource-linux-x64-5.4.0.run \
+ && ./qt-opensource-linux-x64-5.4.0.run
+### FIXME install qt5.4 from source because run works only with gui
 RUN git clone https://github.com/parallaxinc/SimpleIDE.git SimpleIDE \
  && cd SimpleIDE \
  && bash plinrelease.sh
