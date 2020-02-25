@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM ubuntu:14.04
 
 ARG AUSER=propeller
 ARG AUSER_ID=1000
@@ -17,8 +17,7 @@ WORKDIR /root
 RUN apt update \
  && apt upgrade -y \
  && apt install -y apt-utils \
- && apt install -y bash curl make wget vim-gtk3 git tmux fonts-firacode xserver-xorg-dev gcc g++ texinfo binutils bison \
- && apt clean
+ && apt install -y tar bash curl make wget vim git tmux xserver-xorg-dev gcc g++ gdb build-essential binutils bison flex expat xterm libreadline5
 
 # Make skel dir
 USER root
@@ -45,14 +44,20 @@ RUN mkdir -p /mnt/data \
  && ln -s /mnt/data $AHOME/data \
  && chown $AUSER:$AGROUP $AHOME/data
 
+## Install dependencies
+RUN wget http://ftp.gnu.org/gnu/texinfo/texinfo-4.13a.tar.gz \
+ && tar -zxvf texinfo-4.13a.tar.gz \
+ && cd texinfo-4.13 \
+ && ./configure \
+ && make \
+ && make install
+
 ## Install propeller-gcc compiler
-RUN git clone https://github.com/dbetz/propeller-gcc.git propgcc \
+RUN git clone https://github.com/parallaxinc/propgcc propgcc \
  && cd propgcc \
- && git submodule init \
- && git submodule update \
- && bash ./gcc/contrib/download_prerequisites \
- && make INSTALL=$PREFIX GCCDIR=gcc ERROR_ON_WARNING=no \
- && make INSTALL=$PREFIX ERROR_ON_WARNING=no install
+ && ed -i -e 's/@colophon/@@colophon/' -e 's/doc@cygnus.com/doc@@cygnus.com/' binutils/bfd/doc/bfd.texinfo \
+ && ed -i -e 's/@colophon/@@colophon/' -e 's/doc@cygnus.com/doc@@cygnus.com/' binutils/ld/ld.texinfo
+ && make 
 
 ## Install Spin/PASM compiler for the Parallax Propeller
 RUN git clone https://github.com/parallaxinc/OpenSpin.git OpenSpin \
