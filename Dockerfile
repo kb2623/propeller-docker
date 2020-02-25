@@ -75,7 +75,8 @@ RUN git clone https://github.com/parallaxinc/PropLoader.git PropLoader \
 RUN wget https://download.qt.io/archive/qt/5.4/5.4.0/single/qt-everywhere-opensource-src-5.4.0.tar.gz \
  && tar -zxvf qt-everywhere-opensource-src-5.4.0.tar.gz \
  && cd qt-everywhere-opensource-src-5.4.0 \
- && make
+ && ./configure -prefix $PWD/qtbase -opensource -nomake tests \
+ && make -j 4
 RUN git clone https://github.com/parallaxinc/SimpleIDE.git SimpleIDE \
  && cd SimpleIDE \
  && bash plinrelease.sh
