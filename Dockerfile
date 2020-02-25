@@ -73,7 +73,7 @@ RUN git clone https://github.com/parallaxinc/PropLoader.git PropLoader \
 ## Install SimpleIDE
 ### FIXME install qt5.4 from source because run works only with gui
 RUN wget https://download.qt.io/archive/qt/5.4/5.4.0/single/qt-everywhere-opensource-src-5.4.0.tar.gz \
- && tar -zxvf qt-everywhere-opensource-src-5.4.0.zip \
+ && tar -zxvf qt-everywhere-opensource-src-5.4.0.tar.gz \
  && cd qt-everywhere-opensource-src-5.4.0 \
  && make
 RUN git clone https://github.com/parallaxinc/SimpleIDE.git SimpleIDE \
