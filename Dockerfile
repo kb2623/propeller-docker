@@ -71,10 +71,14 @@ RUN git clone https://github.com/parallaxinc/PropLoader.git PropLoader \
  && make
 
 ## Install SimpleIDE
-RUN wget https://download.qt.io/archive/qt/5.4/5.4.0/qt-opensource-linux-x64-5.4.0.run \
- && chmod a+x qt-opensource-linux-x64-5.4.0.run \
- && ./qt-opensource-linux-x64-5.4.0.run
+#RUN wget https://download.qt.io/archive/qt/5.4/5.4.0/qt-opensource-linux-x64-5.4.0.run \
+# && chmod a+x qt-opensource-linux-x64-5.4.0.run \
+# && ./qt-opensource-linux-x64-5.4.0.run
 ### FIXME install qt5.4 from source because run works only with gui
+RUN wget https://download.qt.io/archive/qt/5.4/5.4.0/single/qt-everywhere-opensource-src-5.4.0.zip \
+ && zip qt-everywhere-opensource-src-5.4.0.zip \
+ && cd qt-everywhere-opensource-src-5.4.0 \
+ && make
 RUN git clone https://github.com/parallaxinc/SimpleIDE.git SimpleIDE \
  && cd SimpleIDE \
  && bash plinrelease.sh
