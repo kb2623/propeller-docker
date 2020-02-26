@@ -15,8 +15,8 @@ WORKDIR /root
 
 ## Install basic programs
 RUN apt update \
- && apt install -y apt-utils sed tar curl bash git vim-gtk build-essential \
- && apt install -y bison flex gperf perl python ruby libncurses5-dev expat qt5-default
+ && apt install -y apt-utils sed tar curl wget bash git vim-gtk build-essential \
+ && apt install -y bison flex gperf perl python ruby libncurses5-dev expat
 
 # Make skel dir
 USER root
@@ -71,13 +71,16 @@ RUN cd PropLoader \
  && make -j $MAKE_NO_PROC
 
 ## Install SimpleIDE
-#RUN curl -O https://download.qt.io/archive/qt/5.4/5.4.0/single/qt-everywhere-opensource-src-5.4.0.tar.gz \
-#&& tar -zxvf qt-everywhere-opensource-src-5.4.0.tar.gz \
-#&& cd qt-everywhere-opensource-src-5.4.0 \
-#&& ./configure -prefix QtNew -release -opensource -confirm-license -static -qt-xcb -no-glib -no-pulseaudio -no-alsa -opengl desktop -nomake examples -nomake tests \
-#&& make -j $MAKE_NO_PROC \
-#&& make install
+### Dependencies
+RUN apt install -y qt5-default
 ### FIXME install qt5.4 from source because run works only with gui
+RUN wget https://download.qt.io/archive/qt/5.4/5.4.2/single/qt-everywhere-opensource-src-5.4.2.tar.gz \
+ && tar zxvf qt-everywhere-opensource-src-5.4.2.tar.gz
+RUN cd qt-everywhere-opensource-src-5.4.2 \
+ && ./configure -prefix QtNew -release -opensource -confirm-license -static -qt-xcb -no-glib -no-pulseaudio -no-alsa -opengl desktop -nomake examples -nomake tests \
+ && make -j $MAKE_NO_PROC \
+ && make install
+### Install SimpleIDE
 RUN git clone https://github.com/parallaxinc/SimpleIDE.git SimpleIDE
 RUN cd SimpleIDE \
  && bash plinrelease.sh
