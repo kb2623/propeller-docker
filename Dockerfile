@@ -72,12 +72,11 @@ RUN cd PropLoader \
 
 ## Install SimpleIDE
 ### Dependencies
-RUN apt install -y qt5-default
-### FIXME install qt5.4 from source because run works only with gui
+RUN apt install -y qt5-default libxcb1 libxcb1-dev libx11-xcb1 libx11-xcb-dev libxcb-keysyms1 libxcb-keysyms1-dev libxcb-image0 libxcb-image0-dev libxcb-shm0 libxcb-shm0-dev libxcb-render-util0 libxcb-render-util0-dev libxcb-xfixes0-dev libxrender-dev libxcb-shape0-dev libxcb-randr0-dev libxcb-glx0-dev
 RUN wget https://download.qt.io/archive/qt/5.4/5.4.2/single/qt-everywhere-opensource-src-5.4.2.tar.gz \
  && tar zxvf qt-everywhere-opensource-src-5.4.2.tar.gz
 RUN cd qt-everywhere-opensource-src-5.4.2 \
- && ./configure -prefix QtNew -release -opensource -confirm-license -static -qt-xcb -no-glib -no-pulseaudio -no-alsa -opengl desktop -nomake examples -nomake tests \
+ && ./configure -prefix "${PROPELLER_PREFIX}" -release -opensource -confirm-license -static -qt-xcb -no-glib -no-pulseaudio -no-alsa -opengl desktop -nomake examples -nomake tests \
  && make -j $MAKE_NO_PROC \
  && make install
 ### Install SimpleIDE
