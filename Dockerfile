@@ -28,7 +28,8 @@ ADD .bashrc .
 ADD .tmux.conf .
 RUN mkdir -p .vim/autoload \
  && cd .vim/autoload \
- && wget https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+ && wget https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim \
+ && echo -e '\nexport QT_X11_NO_MITSHM=1\n' >> .profile
 
 # Create a user and install git programs
 USER root
@@ -88,6 +89,7 @@ RUN cd qt-everywhere-opensource-src-5.4.2 \
 RUN rm -rf qt-everywhere-opensource-src-5.4.2
 
 ### Install SimpleIDE
+ENV QT_X11_NO_MITSHM=1
 RUN wget http://downloads.parallax.com/plx/software/side/101rc1/simple-ide_1-0-1-rc1_amd64.deb
 RUN dpkg -i ./simple-ide_1-0-1-rc1_amd64.deb || apt-get install -f -y
 RUN rm simple-ide_1-0-1-rc1_amd64.deb
