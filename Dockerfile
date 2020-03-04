@@ -1,4 +1,27 @@
-FROM debian:jessie
+FROM debian:buster as gcc4
+
+ARG NO_PROC=2
+ARG GCC_VERSION=4.8.5
+
+USER root
+WORKDIR /root
+
+RUN apt-get update \
+ && apt-get install -y gcc g++ flex wget make bash tar perl libisl-dev libmpc-dev lbzip2
+
+RUN wget https://ftp.gnu.org/gnu/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.bz2 \
+ && tar xaf gcc-$GCC_VERSION.tar.bz2
+RUN mkdir build \
+ && cd build \
+ && ../gcc-$GCC_VERSION/configure --prefix=$HOME/gcc --enable-languages=c,c++ --disable-nls --disable-multilib --disable-werror --enable-threads=posix --enable-languages=fortran,c,c++ --with-system-zlib \
+ && make -k -j$NO_PROC \
+ && make install
+
+USER root
+WORKDIR /root
+ENTRYPOINT bash
+
+FROM gcc4
 
 ARG AUSER=propeller
 ARG AUSER_ID=1000
@@ -107,3 +130,5 @@ SHELL ["/bin/bash", "-c"]
 VOLUME /tmp/.X11-unix
 VOLUME /mnt/data
 ENTRYPOINT bash
+
+# vim: tabstop=1 expandtab shiftwidth=1 softtabstop=1
