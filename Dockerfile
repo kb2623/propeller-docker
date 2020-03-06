@@ -114,3 +114,5 @@ WORKDIR $AHOME
 VOLUME /tmp/.X11-unix
 VOLUME /mnt/data
 ENTRYPOINT bash
+
+# vim: tabstop=1 expandtab shiftwidth=1 softtabstop=1
