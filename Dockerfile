@@ -31,9 +31,9 @@ RUN sed -i '$ a deb [check-valid-until=no] http://snapshot.debian.org/archive/de
  && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 100 \
  && apt-get install -y --no-install-recommends bison flex gperf perl python ruby libncurses5-dev expat
 
-ADD .vimrc /etc/skel
-ADD .bashrc /etc/skel
-ADD .tmux.conf /etc/skel
+ADD files/.vimrc /etc/skel
+ADD files/.bashrc /etc/skel
+ADD files/.tmux.conf /etc/skel
 RUN mkdir -p /etc/skel/.vim/autoload \
  && cd /etc/skel/.vim/autoload \
  && wget https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim \
