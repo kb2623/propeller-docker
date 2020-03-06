@@ -7,6 +7,8 @@ DOCKER_USER_ID:=1000
 DOCKER_GROUP:=propellers
 DOCKER_GROUP_ID:=1000
 
+USB_DEVICE:=/dev/ttyUSB0
+
 MAKE_NO_PROC:=3
 
 all: build run
@@ -37,6 +39,7 @@ run:
 		-v ${DOCKER_VOLUME_SRC}:/mnt/data \
 		--device /dev/dri \
 		--device /dev/snd \
+		--device ${USB_DEVICE} \
 		--hostname=${DOCKER_NAME} \
 		--net=host \
 		${DOCKER_NAME}-image:${DOCKER_TAG}

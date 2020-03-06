@@ -1,4 +1,4 @@
-FROM debian:jessie
+FROM debian:sid
 
 ARG AUSER=propeller
 ARG AUSER_ID=1000
@@ -13,28 +13,32 @@ ARG MAKE_NO_PROC=4
 USER root
 WORKDIR /root
 
-## Install basic programs
 RUN apt-get update \
- && apt-get install -y apt-utils sed tar wget bash git vim-gtk build-essential \
- && apt-get install -y bison flex gperf perl python ruby libncurses5-dev expat
+ && apt-get install -y --no-install-recommends apt-utils ca-certificates netbase curl wget sed bash gnupg bzip2 apt-transport-https
 
-# Make skel dir
-USER root
-WORKDIR /etc/skel
 SHELL ["/bin/bash", "-c"]
 
-ADD .vimrc .
-ADD .bashrc .
-ADD .tmux.conf .
-RUN mkdir -p .vim/autoload \
- && cd .vim/autoload \
+## Install basic programs
+RUN sed -i '$ a deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20170101/ jessie main contrib non-free' /etc/apt/sources.list \
+ && sed -i '$ a deb-src [check-valid-until=no] http://snapshot.debian.org/archive/debian/20170101/ jessie main contrib non-free' /etc/apt/sources.list \
+ && sed -i '$ a deb [check-valid-until=no] http://snapshot.debian.org/archive/debian-security/20170101/ jessie/updates main contrib non-free' /etc/apt/sources.list \
+ && sed -i '$ a deb-src [check-valid-until=no] http://snapshot.debian.org/archive/debian-security/20170101/ jessie/updates main contrib non-free' /etc/apt/sources.list \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends tar git vim-gtk gcc-4.9 g++-4.9 make \
+ && update-alternatives --install /usr/bin/cc cc /usr/bin/gcc-4.9 100 \
+ && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 100 \
+ && update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++-4.9 100 \
+ && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 100 \
+ && apt-get install -y --no-install-recommends bison flex gperf perl python ruby libncurses5-dev expat
+
+ADD .vimrc /etc/skel
+ADD .bashrc /etc/skel
+ADD .tmux.conf /etc/skel
+RUN mkdir -p /etc/skel/.vim/autoload \
+ && cd /etc/skel/.vim/autoload \
  && wget https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim \
- && echo -e '\nexport QT_X11_NO_MITSHM=1\n' >> .profile
-
-# Create a user and install git programs
-USER root
-WORKDIR /root
-SHELL ["/bin/bash", "-c"]
+ && sed -i '$ a export QT_X11_NO_MITSHM=1' /etc/skel/.profile \
+ && sed -i '$ a export PATH=${PROPELLER_PREFIX}/bin:${PATH}' /etc/skel/.profile
 
 ## Create a new user
 ADD createuser.sh /root
@@ -46,6 +50,10 @@ RUN mkdir -p /mnt/data \
  && ln -s /mnt/data $AHOME/data \
  && chown $AUSER:$AGROUP $AHOME/data
 
+# Create a user and install git programs
+USER root
+WORKDIR /tmp
+
 ## Install dependencies
 RUN wget http://ftp.gnu.org/gnu/texinfo/texinfo-4.13a.tar.gz \
  && tar -zxvf texinfo-4.13a.tar.gz \
@@ -53,8 +61,8 @@ RUN wget http://ftp.gnu.org/gnu/texinfo/texinfo-4.13a.tar.gz \
 RUN cd texinfo-4.13 \
  && ./configure \
  && make -j $MAKE_NO_PROC \
- && make install
-RUN rm -rf texinfo-4.13
+ && make install \
+ && rm -rf texinfo-4.13
 
 ## Install propeller-gcc compiler
 ENV PATH="${PROPELLER_PREFIX}/bin:$PATH"
@@ -103,7 +111,6 @@ RUN rm simple-ide_1-0-1-rc1_amd64.deb
 # ENTRYPOINT
 USER $AUSER
 WORKDIR $AHOME
-SHELL ["/bin/bash", "-c"]
 VOLUME /tmp/.X11-unix
 VOLUME /mnt/data
 ENTRYPOINT bash
