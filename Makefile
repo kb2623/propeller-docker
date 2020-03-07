@@ -11,7 +11,7 @@ USB_DEVICE:=/dev/ttyUSB0
 
 MAKE_NO_PROC:=3
 
-all: build run
+all: build xorgHosts run
 
 volume:
 	mkdir -p ${DOCKER_VOLUME_SRC}
@@ -30,7 +30,7 @@ build:
 		-t ${DOCKER_NAME}-image:${DOCKER_TAG} .
 
 xorgHosts:
-	xhost +
+	-xhost +
 
 run_usb:
 	docker run -ti --rm \
