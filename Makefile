@@ -32,7 +32,7 @@ build:
 xorgHosts:
 	xhost +
 
-run:
+run_usb:
 	docker run -ti --rm \
 		-e DISPLAY=${DISPLAY} \
 		-v /tmp/.X11-unix:/tmp/.X11-unix:rw \
@@ -43,6 +43,24 @@ run:
 		--hostname=${DOCKER_NAME} \
 		--net=host \
 		${DOCKER_NAME}-image:${DOCKER_TAG}
+
+run_no_usb:
+	docker run -ti --rm \
+		-e DISPLAY=${DISPLAY} \
+		-v /tmp/.X11-unix:/tmp/.X11-unix:rw \
+		-v ${DOCKER_VOLUME_SRC}:/mnt/data \
+		--device /dev/dri \
+		--device /dev/snd \
+		--hostname=${DOCKER_NAME} \
+		--net=host \
+		${DOCKER_NAME}-image:${DOCKER_TAG}
+
+run:
+ifeq ($(shell test -e ${USB_DEVICE}), gcc)
+	make run_usb
+else
+	make run_no_usb
+endif
 
 clean:
 	-make clean_volume

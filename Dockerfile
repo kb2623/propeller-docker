@@ -41,7 +41,7 @@ RUN mkdir -p /etc/skel/.vim/autoload \
  && sed -i '$ a export PATH=${PROPELLER_PREFIX}/bin:${PATH}' /etc/skel/.profile
 
 ## Create a new user
-ADD createuser.sh /root
+ADD files/createuser.sh /root
 RUN chmod a+x createuser.sh \
  && ./createuser.sh $AUSER $AUSER_ID $AGROUP $AGROUP_ID $AHOME \
  && rm createuser.sh
@@ -68,7 +68,7 @@ RUN cd texinfo-4.13 \
 ENV PATH="${PROPELLER_PREFIX}/bin:$PATH"
 RUN git clone https://github.com/parallaxinc/propgcc propgcc
 RUN cd propgcc \
- && sed -i -e 's/@colophon/@@colophon/' -e 's/doc@cygnus.com/doc@@cygnus.com/' binutils/bfd/doc/bfd.texinfo \
+ && sed -i -e 's/@colophon/@@colophobn/' -e 's/doc@cygnus.com/doc@@cygnus.com/' binutils/bfd/doc/bfd.texinfo \
  && sed -i -e 's/@colophon/@@colophon/' -e 's/doc@cygnus.com/doc@@cygnus.com/' binutils/ld/ld.texinfo \
  && make PREFIX="${PROPELLER_PREFIX}" ERROR_ON_WARNING=no
 RUN rm -rf propgcc
@@ -85,24 +85,24 @@ RUN cd PropLoader \
  && make -j $MAKE_NO_PROC
 
 ## Install SimpleIDE
-### Dependencies
-RUN apt-get install -y qt5-default libxcb1 libxcb1-dev libx11-xcb1 libx11-xcb-dev libxcb-keysyms1 libxcb-keysyms1-dev libxcb-image0 libxcb-image0-dev libxcb-shm0 libxcb-shm0-dev libxcb-render-util0 libxcb-render-util0-dev libxcb-xfixes0-dev libxrender-dev libxcb-shape0-dev libxcb-randr0-dev libxcb-glx0-dev
-RUN wget https://download.qt.io/archive/qt/5.4/5.4.2/single/qt-everywhere-opensource-src-5.4.2.tar.gz \
- && tar zxvf qt-everywhere-opensource-src-5.4.2.tar.gz \
- && rm qt-everywhere-opensource-src-5.4.2.tar.gz
-RUN cd qt-everywhere-opensource-src-5.4.2 \
- && ./configure -prefix "${PROPELLER_PREFIX}" -release -opensource -confirm-license -static -qt-xcb -no-glib -no-pulseaudio -no-alsa -opengl desktop -nomake examples -nomake tests \
- && make -j $MAKE_NO_PROC \
- && make install
-RUN rm -rf qt-everywhere-opensource-src-5.4.2
-
-### Install SimpleIDE
+### Install SimpleIDE from deb
 ENV QT_X11_NO_MITSHM=1
 RUN wget http://downloads.parallax.com/plx/software/side/101rc1/simple-ide_1-0-1-rc1_amd64.deb
 RUN dpkg -i ./simple-ide_1-0-1-rc1_amd64.deb || apt-get install -f -y
 RUN rm simple-ide_1-0-1-rc1_amd64.deb
 
 # TODO Build IDE from source for better compatibility
+### Dependencies
+#RUN apt-get install -y qt4-default qt5-default libxcb1 libxcb1-dev libx11-xcb1 libx11-xcb-dev libxcb-keysyms1 libxcb-keysyms1-dev libxaabcb-image0 libxcb-image0-dev libxcb-shm0 libxcb-shm0-dev libxcb-render-util0 libxcb-render-util0-dev libxcb-xfixes0-dev libxrender-dev libxcb-shape0-dev libxcb-randr0-dev libxcb-glx0-dev
+#RUN wget https://download.qt.io/new_archive/qt/5.4/5.4.2/single/qt-everywhere-opensource-src-5.4.2.tar.gz \
+# && tar zxvf qt-everywhere-opensource-src-5.4.2.tar.gz \
+# && rm qt-everywhere-opensource-src-5.4.2.tar.gz
+#RUN cd qt-everywhere-opensource-src-5.4.2 \
+#&& ./configure -prefix "${PROPELLER_PREFIX}" -release -opensource -confirm-license -static -qt-xcb -no-glib -no-pulseaudio -no-alsa -opengl desktop -nomake examples -nomake tests \
+# && make -j $MAKE_NO_PROC \
+# && make install
+# RUN rm -rf qt-everywhere-opensource-src-5.4.2
+## simpleide build
 #RUN git clone https://github.com/parallaxinc/SimpleIDE.git SimpleIDE
 #RUN cd SimpleIDE \
 #&& sed -i '44,54d' plinrelease.sh
